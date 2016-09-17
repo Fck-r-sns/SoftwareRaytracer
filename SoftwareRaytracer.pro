@@ -19,7 +19,8 @@ SOURCES += \
     src/scene/Primitive.cpp \
     src/scene/Material.cpp \
     src/scene/Triangle.cpp \
-    src/raytracing/Intersection.cpp
+    src/raytracing/Intersection.cpp \
+    src/scene/Sphere.cpp
 
 HEADERS += \
     src/libs/FreeImage/FreeImage.h \
@@ -34,7 +35,8 @@ HEADERS += \
     src/scene/Primitive.h \
     src/scene/Material.h \
     src/scene/Triangle.h \
-    src/raytracing/Intersection.h
+    src/raytracing/Intersection.h \
+    src/scene/Sphere.h
 
 HEADERS += \
     src/libs/glm/*.hpp \
