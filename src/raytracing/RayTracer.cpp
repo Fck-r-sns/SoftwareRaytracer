@@ -39,7 +39,7 @@ void RayTracer::initCamera()
     w = glm::normalize(cfg.camera.lookFrom - cfg.camera.lookAt);
     u = glm::normalize(glm::cross(cfg.camera.up, w));
     v = glm::cross(w, u);
-    float fovx = std::tan((float)cfg.camera.fovy / 2 / radiansToDegreesCoef);
+    float fovx = std::tan((float)cfg.camera.fovy / 2 * degreesToRadiansCoef);
     fovx *= cfg.width / (float)cfg.height;
     fovx = 2 * std::atan(fovx);
     fovx = fovx * radiansToDegreesCoef;
@@ -65,6 +65,7 @@ Pixel RayTracer::getColorFromIntersection(const Intersection &intersection) cons
     const Material &material = cfg.materials.at(intersection.primitive->materialIndex);
     color += material.ambient;
     color += material.emission;
+//    color += material.diffuse;
 //    const glm::vec3 directionToTheLight = glm::normalize(cfg.light.directional.position - intersection.point);
 //    const float distanceToTheLight = glm::distance(cfg.light.directional.position, intersection.point);
 //    const float attenuation =
@@ -80,7 +81,7 @@ Ray RayTracer::getRay(int pixelXIndex, int pixelYIndex) const
     const float pixelXPos = pixelXIndex + 0.5; // center of pixel
     const float pixelYPos = pixelYIndex + 0.5; // center of pixel
     const float a = std::tan(fovx / 2 * degreesToRadiansCoef) * (2 * pixelXPos - cfg.width) / cfg.width;
-    const float b = std::tan(cfg.camera.fovy / 2 * degreesToRadiansCoef) * (cfg.height - 2 * pixelYPos) / cfg.height;
+    const float b = std::tan(cfg.camera.fovy / 2.0 * degreesToRadiansCoef) * (cfg.height - 2 * pixelYPos) / cfg.height;
     const glm::vec3 direction = glm::normalize(a * u + b * v - w);
     return Ray(cfg.camera.lookFrom, direction);
 }
