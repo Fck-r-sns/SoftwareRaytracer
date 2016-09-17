@@ -8,13 +8,17 @@ DESTDIR = $${PWD}/bin
 SOURCES += \
     src/main.cpp \
     src/ImageWriter.cpp \
-    src/Image.cpp
+    src/Image.cpp \
+    src/SceneConfiguration.cpp \
+    src/Parser.cpp
 
 HEADERS += \
     src/libs/FreeImage/FreeImage.h \
     src/ImageWriter.h \
     src/defines.h \
-    src/Image.h
+    src/Image.h \
+    src/SceneConfiguration.h \
+    src/Parser.h
 
 HEADERS += \
     src/libs/glm/*.hpp
