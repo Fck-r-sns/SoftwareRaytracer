@@ -1,8 +1,9 @@
 #include <iostream>
-#include "Image.h"
-#include "ImageWriter.h"
 #include "SceneConfiguration.h"
 #include "Parser.h"
+#include "Image.h"
+#include "RayTracer.h"
+#include "ImageWriter.h"
 
 int main(int argc, char *argv[])
 {
@@ -11,14 +12,9 @@ int main(int argc, char *argv[])
     }
     const std::string inputFileName = argv[1];
     SceneConfiguration cfg = Parser::parse(inputFileName);
-    const int w = 256;
-    const int h = 256;
-    Image image(w, h);
-    for (int row = 0; row < h; ++row) {
-        for (int column = 0; column < w; ++column) {
-            image.setPixel(row, column, Pixel(column, row, (column + row) / 2));
-        }
-    }
-    ImageWriter().saveImage("test.png", image, w, h);
+    Image image(cfg.width, cfg.height);
+    RayTracer rayTracer(cfg);
+    rayTracer.run(image);
+    ImageWriter().saveImage("test.png", image, cfg.width, cfg.height);
     return 0;
 }
