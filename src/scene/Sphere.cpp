@@ -1,8 +1,8 @@
 #include "Sphere.h"
 #include "libs/glm/gtc/matrix_transform.hpp"
 
-Sphere::Sphere(const glm::vec3 &position, float radius, const Material &material) :
-    Primitive(material),
+Sphere::Sphere(const glm::vec3 &position, float radius, int materialIndex) :
+    Primitive(materialIndex),
     position(position),
     radius(radius)
 {
@@ -25,6 +25,7 @@ bool Sphere::findIntersection(const Ray &ray, float &minDist, Intersection &resu
     if (t > 0 && t < minDist) {
         minDist = t;
         result.t = t;
+        result.point = ray.origin + t * ray.direction;
         result.primitive = this;
         return true;
     }

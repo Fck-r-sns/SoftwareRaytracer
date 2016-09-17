@@ -158,7 +158,7 @@ SceneConfiguration Parser::parse(const std::string &fileName)
                                     cfg.vertices.at((int)values[0]),
                                 cfg.vertices.at((int)values[1]),
                                 cfg.vertices.at((int)values[2]),
-                                *currentMaterial
+                                cfg.materials.size() - 1
                                 );
                         cfg.primitives.emplace_back(t);
                     }

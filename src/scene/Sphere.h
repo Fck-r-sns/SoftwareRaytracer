@@ -6,7 +6,7 @@
 class Sphere : public Primitive
 {
 public:
-    Sphere(const glm::vec3 &position, float radius, const Material &material);
+    Sphere(const glm::vec3 &position, float radius, int materialIndex);
     bool findIntersection(const Ray &ray, float &minDist, Intersection &result) const override;
 
 private:

@@ -8,12 +8,12 @@
 class Primitive
 {
 public:
-    Primitive(const Material &material);
+    Primitive(int materialIndex);
     virtual ~Primitive();
     virtual bool findIntersection(const Ray &ray, float &minDist, Intersection &result) const = 0;
 
 public:
-    const Material &material;
+    const int materialIndex;
 };
 
 #endif // PRIMITIVE_H
