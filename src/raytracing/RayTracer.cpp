@@ -1,5 +1,7 @@
+#include <iostream>
 #include "RayTracer.h"
 #include "libs/glm/gtc/matrix_transform.hpp"
+#include "scene/Triangle.h"
 
 const float PI = std::acos(-1);
 const float radiansToDegreesCoef = 180 / PI;
@@ -17,7 +19,10 @@ void RayTracer::run(Image &outputImage)
     for (int y = 0; y < h; ++y) {
         for (int x = 0; x < w; ++x) {
             Ray ray = getRay(x, y);
-            findIntersection(ray);
+            Intersection intersection;
+            const bool intersected = findIntersection(ray, intersection);
+            const Pixel pixel = intersected ? getColorFromIntersection(intersection) : Pixel();
+            outputImage.setPixel(x, y, pixel);
         }
     }
 }
@@ -34,34 +39,20 @@ void RayTracer::initCamera()
     this->fovx = fovx;
 }
 
-void RayTracer::findIntersection(const Ray &ray) const
-{
-    findIntersectionWithTriangles(ray);
-}
-
-void RayTracer::findIntersectionWithTriangles(const Ray &ray) const
+bool RayTracer::findIntersection(const Ray &ray, Intersection &result) const
 {
     float minDist = std::numeric_limits<float>::max();
-    const SceneConfiguration::Triangle *intersected = nullptr;
-    for (const SceneConfiguration::Triangle &triangle : cfg.triangles) {
-        const glm::vec3 BminusA = triangle.vertices[1] - triangle.vertices[0];
-        const glm::vec3 CminusA = triangle.vertices[2] - triangle.vertices[0];
-        const glm::vec3 n = glm::normalize(glm::cross(BminusA, CminusA));
-        const float t = (glm::dot(triangle.vertices[0], n) - glm::dot(ray.origin, n)) / glm::dot(ray.direction, n);
-        if (t > 0 && t < minDist) {
-            const glm::vec3 P = ray.origin + t * ray.direction;
-            const glm::vec3 PminusA = P - triangle.vertices[0];
-            // solve equations: P-A=a(B-A)+b(C-A)
-            const float b = (PminusA.y * BminusA.x - PminusA.x * BminusA.y) / (CminusA.y * BminusA.x - CminusA.x * BminusA.y);
-            const float a = (PminusA.x - b * CminusA.x) / BminusA.x;
-            if ((0 <= a) && (a <= 1)
-                    && (0 <= b) && (b <= 1)
-                    && (a + b <= 1)) {
-                minDist = t;
-                intersected = &triangle;
-            }
-        }
+    bool found = false;
+    for (const auto &primitive : cfg.primitives) {
+        found = primitive->findIntersection(ray, minDist, result);
     }
+    return found;
+}
+
+Pixel RayTracer::getColorFromIntersection(const Intersection &intersection) const
+{
+    const glm::vec3 &diffuse = intersection.primitive->material.diffuse;
+    return Pixel(diffuse.r * 255, diffuse.g * 255, diffuse.b * 255);
 }
 
 Ray RayTracer::getRay(int pixelXIndex, int pixelYIndex) const
