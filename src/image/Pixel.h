@@ -1,5 +1,5 @@
-#ifndef DEFINES_H
-#define DEFINES_H
+#ifndef PIXEL_H
+#define PIXEL_H
 
 #include <stdint.h>
 
@@ -19,4 +19,4 @@ struct Pixel {
     {}
 };
 
-#endif // DEFINES_H
+#endif // PIXEL_H

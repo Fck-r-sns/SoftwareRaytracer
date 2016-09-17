@@ -1,9 +1,9 @@
 #include <iostream>
-#include "SceneConfiguration.h"
-#include "Parser.h"
-#include "Image.h"
-#include "RayTracer.h"
-#include "ImageWriter.h"
+#include "scene/SceneConfiguration.h"
+#include "scene/Parser.h"
+#include "image/Image.h"
+#include "raytracing/RayTracer.h"
+#include "image/ImageWriter.h"
 
 int main(int argc, char *argv[])
 {

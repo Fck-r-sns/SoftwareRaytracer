@@ -5,26 +5,28 @@ CONFIG -= qt
 
 DESTDIR = $${PWD}/bin
 
+INCLUDEPATH = $${PWD}/src
+
 SOURCES += \
     src/main.cpp \
-    src/ImageWriter.cpp \
-    src/Image.cpp \
-    src/SceneConfiguration.cpp \
-    src/Parser.cpp \
+    src/image/ImageWriter.cpp \
+    src/image/Image.cpp \
+    src/scene/SceneConfiguration.cpp \
+    src/scene/Parser.cpp \
     src/Transform.cpp \
-    src/RayTracer.cpp \
-    src/Ray.cpp
+    src/raytracing/RayTracer.cpp \
+    src/raytracing/Ray.cpp
 
 HEADERS += \
     src/libs/FreeImage/FreeImage.h \
-    src/ImageWriter.h \
-    src/defines.h \
-    src/Image.h \
-    src/SceneConfiguration.h \
-    src/Parser.h \
+    src/image/ImageWriter.h \
+    src/image/Pixel.h \
+    src/image/Image.h \
+    src/scene/SceneConfiguration.h \
+    src/scene/Parser.h \
     src/Transform.h \
-    src/RayTracer.h \
-    src/Ray.h
+    src/raytracing/RayTracer.h \
+    src/raytracing/Ray.h
 
 HEADERS += \
     src/libs/glm/*.hpp \

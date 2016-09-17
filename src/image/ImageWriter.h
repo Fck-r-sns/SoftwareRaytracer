@@ -2,7 +2,6 @@
 #define IMAGEWRITER_H
 
 #include <string>
-#include "defines.h"
 #include "Image.h"
 
 class ImageWriter

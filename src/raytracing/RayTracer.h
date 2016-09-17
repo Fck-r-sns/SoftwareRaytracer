@@ -2,8 +2,8 @@
 #define RAYTRACER_H
 
 #include "libs/glm/vec3.hpp"
-#include "Image.h"
-#include "SceneConfiguration.h"
+#include "image/Image.h"
+#include "scene/SceneConfiguration.h"
 #include "Ray.h"
 
 class RayTracer
