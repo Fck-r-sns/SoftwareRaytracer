@@ -11,7 +11,7 @@ struct SceneConfiguration
         glm::vec3 lookFrom = { 0, 0, -1 };
         glm::vec3 lookAt = { 0, 0, 0 };
         glm::vec3 up = { 0, 1, 0 };
-        int fov = 45;
+        int fovy = 45;
     };
 
     struct Light {

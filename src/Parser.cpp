@@ -62,7 +62,7 @@ SceneConfiguration Parser::parse(const std::string &fileName)
                             cfg.camera.lookAt[i] = values[3 + i];
                             cfg.camera.up[i] = values[6 + i];
                         }
-                        cfg.camera.fov = values[9];
+                        cfg.camera.fovy = values[9];
                     }
                 }
 
