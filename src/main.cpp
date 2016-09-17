@@ -15,6 +15,6 @@ int main(int argc, char *argv[])
     Image image(cfg.width, cfg.height);
     RayTracer rayTracer(cfg);
     rayTracer.run(image);
-    ImageWriter().saveImage("test.png", image, cfg.width, cfg.height);
+    ImageWriter().saveImage(cfg.outputFileName, image, cfg.width, cfg.height);
     return 0;
 }
