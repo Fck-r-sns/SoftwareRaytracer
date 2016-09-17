@@ -6,12 +6,13 @@
 using PixelColor = uint8_t;
 
 struct Pixel {
-    PixelColor r;
-    PixelColor g;
+    // BGR color order
     PixelColor b;
+    PixelColor g;
+    PixelColor r;
 
     Pixel(PixelColor r, PixelColor g, PixelColor b) :
-        r(r), g(g), b(b)
+        b(b), g(g), r(r)
     {}
 
     Pixel() :

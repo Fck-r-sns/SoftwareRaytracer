@@ -21,12 +21,12 @@ Image::~Image()
 
 Pixel Image::getPixel(int x, int y) const
 {
-    return data[y * height + x];
+    return data[y * width + x];
 }
 
 void Image::setPixel(int x, int y, const Pixel &pixel)
 {
-    data[y * height + x] = pixel;
+    data[y * width + x] = pixel;
 }
 
 bool Image::isValid() const
