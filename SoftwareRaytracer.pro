@@ -11,7 +11,9 @@ SOURCES += \
     src/Image.cpp \
     src/SceneConfiguration.cpp \
     src/Parser.cpp \
-    src/Transform.cpp
+    src/Transform.cpp \
+    src/RayTracer.cpp \
+    src/Ray.cpp
 
 HEADERS += \
     src/libs/FreeImage/FreeImage.h \
@@ -20,7 +22,9 @@ HEADERS += \
     src/Image.h \
     src/SceneConfiguration.h \
     src/Parser.h \
-    src/Transform.h
+    src/Transform.h \
+    src/RayTracer.h \
+    src/Ray.h
 
 HEADERS += \
     src/libs/glm/*.hpp \
