@@ -13,7 +13,6 @@ public:
 
 public:
     float t = std::numeric_limits<float>::max();
-    glm::vec3 point;
     const Primitive *primitive = nullptr;
 };
 
