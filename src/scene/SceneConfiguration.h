@@ -3,7 +3,10 @@
 
 #include <string>
 #include <vector>
+#include <memory>
 #include "libs/glm/vec3.hpp"
+#include "Material.h"
+#include "Primitive.h"
 
 struct SceneConfiguration
 {
@@ -31,19 +34,6 @@ struct SceneConfiguration
         Attenuation attenuation;
     };
 
-    struct Material {
-        glm::vec3 ambient = { 0.2, 0.2, 0.2 };
-        glm::vec3 diffuse;
-        glm::vec3 specular;
-        glm::vec3 emission;
-        float shininess = 1;
-    };
-
-    struct Triangle {
-        glm::vec3 vertices[3];
-        Material *material;
-    };
-
     int width = 0;
     int height = 0;
     int maxDepth = 5;
@@ -52,7 +42,7 @@ struct SceneConfiguration
     Light light;
     std::vector<Material> materials;
     std::vector<glm::vec3> vertices;
-    std::vector<Triangle> triangles;
+    std::vector<std::unique_ptr<Primitive>> primitives;
 };
 
 #endif // SCENECONFIGURATION_H

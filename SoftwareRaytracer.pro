@@ -15,7 +15,11 @@ SOURCES += \
     src/scene/Parser.cpp \
     src/Transform.cpp \
     src/raytracing/RayTracer.cpp \
-    src/raytracing/Ray.cpp
+    src/raytracing/Ray.cpp \
+    src/scene/Primitive.cpp \
+    src/scene/Material.cpp \
+    src/scene/Triangle.cpp \
+    src/raytracing/Intersection.cpp
 
 HEADERS += \
     src/libs/FreeImage/FreeImage.h \
@@ -26,7 +30,11 @@ HEADERS += \
     src/scene/Parser.h \
     src/Transform.h \
     src/raytracing/RayTracer.h \
-    src/raytracing/Ray.h
+    src/raytracing/Ray.h \
+    src/scene/Primitive.h \
+    src/scene/Material.h \
+    src/scene/Triangle.h \
+    src/raytracing/Intersection.h
 
 HEADERS += \
     src/libs/glm/*.hpp \

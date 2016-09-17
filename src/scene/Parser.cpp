@@ -7,11 +7,12 @@
 #include <stack>
 #include "Parser.h"
 #include "Transform.h"
+#include "Triangle.h"
 
 SceneConfiguration Parser::parse(const std::string &fileName)
 {
     SceneConfiguration cfg;
-    SceneConfiguration::Material *currentMaterial = nullptr;
+    Material *currentMaterial = nullptr;
     std::string str, cmd;
     std::ifstream in;
     in.open(fileName.c_str());
@@ -91,7 +92,7 @@ SceneConfiguration Parser::parse(const std::string &fileName)
 
                 else if (cmd == "ambient") {
 
-                    cfg.materials.push_back(SceneConfiguration::Material());
+                    cfg.materials.push_back(Material());
                     currentMaterial = &cfg.materials.back();
 
                     validinput = readvals(s, 3, values);
@@ -152,18 +153,16 @@ SceneConfiguration Parser::parse(const std::string &fileName)
                 else if (cmd == "tri") {
                     validinput = readvals(s, 3, values);
                     if (validinput) {
-                        cfg.triangles.push_back({
-                                                    cfg.vertices.at((int)values[0]),
-                                                    cfg.vertices.at((int)values[1]),
-                                                    cfg.vertices.at((int)values[2]),
-                                                    currentMaterial
-                                                });
+                        Triangle *t = new Triangle(
+                                    cfg.vertices.at((int)values[0]),
+                                cfg.vertices.at((int)values[1]),
+                                cfg.vertices.at((int)values[2]),
+                                *currentMaterial
+                                );
+                        cfg.primitives.emplace_back(t);
                     }
                 }
 
-                // I've left the code for loading objects in the skeleton, so
-                // you can get a sense of how this works.
-                // Also look at demo.txt to get a sense of why things are done this way.
                 //                else if (cmd == "sphere" || cmd == "cube" || cmd == "teapot") {
                 //                    if (numobjects == maxobjects) { // No more objects
                 //                        cerr << "Reached Maximum Number of Objects " << numobjects << " Will ignore further objects\n";
@@ -204,45 +203,19 @@ SceneConfiguration Parser::parse(const std::string &fileName)
                 else if (cmd == "translate") {
                     validinput = readvals(s, 3, values);
                     if (validinput) {
-
                         transfstack.top() *= Transform::translate(values[0], values[1], values[2]);
-
-                        // IMPLEMENTED? ======================================================================================
-                        // YOUR CODE FOR HW 2 HERE.
-                        // Think about how the transformation stack is affected
-                        // You might want to use helper functions on top of file.
-                        // Also keep in mind what order your matrix is!
-
                     }
                 }
                 else if (cmd == "scale") {
                     validinput = readvals(s, 3, values);
                     if (validinput) {
-
                         transfstack.top() *= Transform::scale(values[0], values[1], values[2]);
-
-                        // IMPLEMENTED? ======================================================================================
-                        // YOUR CODE FOR HW 2 HERE.
-                        // Think about how the transformation stack is affected
-                        // You might want to use helper functions on top of file.
-                        // Also keep in mind what order your matrix is!
-
                     }
                 }
                 else if (cmd == "rotate") {
                     validinput = readvals(s, 4, values);
                     if (validinput) {
-
                         transfstack.top() *= glm::mat4(Transform::rotate(values[3], glm::vec3(values[0], values[1], values[2])));
-
-                        // IMPLEMENTED? ======================================================================================
-                        // YOUR CODE FOR HW 2 HERE.
-                        // values[0..2] are the axis, values[3] is the angle.
-                        // You may want to normalize the axis (or in Transform::rotate)
-                        // See how the stack is affected, as above.
-                        // Note that rotate returns a mat3.
-                        // Also keep in mind what order your matrix is!
-
                     }
                 }
 
