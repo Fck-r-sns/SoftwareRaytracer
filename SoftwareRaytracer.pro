@@ -10,7 +10,8 @@ SOURCES += \
     src/ImageWriter.cpp \
     src/Image.cpp \
     src/SceneConfiguration.cpp \
-    src/Parser.cpp
+    src/Parser.cpp \
+    src/Transform.cpp
 
 HEADERS += \
     src/libs/FreeImage/FreeImage.h \
@@ -18,10 +19,12 @@ HEADERS += \
     src/defines.h \
     src/Image.h \
     src/SceneConfiguration.h \
-    src/Parser.h
+    src/Parser.h \
+    src/Transform.h
 
 HEADERS += \
-    src/libs/glm/*.hpp
+    src/libs/glm/*.hpp \
+    src/libs/glm/gtc/*.hpp \
 
 win32: LIBS += -L$$PWD/src/libs/FreeImage/ -lFreeImage
 
