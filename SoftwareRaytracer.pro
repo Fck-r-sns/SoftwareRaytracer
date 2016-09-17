@@ -16,6 +16,9 @@ HEADERS += \
     src/defines.h \
     src/Image.h
 
+HEADERS += \
+    src/libs/glm/*.hpp
+
 win32: LIBS += -L$$PWD/src/libs/FreeImage/ -lFreeImage
 
 INCLUDEPATH += $$PWD/src/libs/FreeImage
