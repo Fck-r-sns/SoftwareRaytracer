@@ -16,6 +16,7 @@ private:
     void initCamera();
     Ray getRay(int pixelXIndex, int pixelYIndex) const;
     void findIntersection(const Ray &ray) const;
+    void findIntersectionWithTriangles(const Ray &ray) const;
 
 private:
     const SceneConfiguration &cfg;
