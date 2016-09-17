@@ -1,8 +1,8 @@
 #include "Primitive.h"
 
-Primitive::Primitive(int materialIndex, const glm::mat4 &transform) :
+Primitive::Primitive(int materialIndex, const glm::mat4 &inversedTransform) :
     materialIndex(materialIndex),
-    transform(transform)
+    inversedTransform(inversedTransform)
 {
 }
 

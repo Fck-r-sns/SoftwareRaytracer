@@ -9,13 +9,13 @@
 class Primitive
 {
 public:
-    Primitive(int materialIndex, const glm::mat4 &transform);
+    Primitive(int materialIndex, const glm::mat4 &inversedTransform);
     virtual ~Primitive();
     virtual bool findIntersection(const Ray &ray, float &minDist, Intersection &result) const = 0;
 
 public:
     const int materialIndex;
-    const glm::mat4 transform;
+    const glm::mat4 inversedTransform;
 };
 
 #endif // PRIMITIVE_H
