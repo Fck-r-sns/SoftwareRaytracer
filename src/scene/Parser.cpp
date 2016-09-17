@@ -13,7 +13,10 @@
 SceneConfiguration Parser::parse(const std::string &fileName)
 {
     SceneConfiguration cfg;
-    Material *currentMaterial = nullptr;
+    cfg.materials.push_back(Material());
+    Material *currentMaterial = &cfg.materials.back();
+    bool materialApplied = false;
+
     std::string str, cmd;
     std::ifstream in;
     in.open(fileName.c_str());
@@ -35,6 +38,8 @@ SceneConfiguration Parser::parse(const std::string &fileName)
                 float values[10]; // Position and color for light, colors for others
                 // Up to 10 params for cameras.
                 bool validinput; // Validity of input
+
+                // general
 
                 if (cmd == "size") {
                     validinput = readvals(s, 2, values);
@@ -68,7 +73,8 @@ SceneConfiguration Parser::parse(const std::string &fileName)
                     }
                 }
 
-                // Process the light
+                // light
+
                 else if (cmd == "directional") {
                     validinput = readvals(s, 6, values);
                     if (validinput) {
@@ -85,19 +91,16 @@ SceneConfiguration Parser::parse(const std::string &fileName)
                     }
                 }
 
-                // Material Commands
-                // Ambient, diffuse, specular, shininess properties for each object.
-                // Filling this in is pretty straightforward, so I've left it in
-                // the skeleton, also as a hint of how to do the more complex ones.
-                // Note that no transforms/stacks are applied to the colors.
+                // material
 
                 else if (cmd == "ambient") {
-
-                    cfg.materials.push_back(Material());
-                    currentMaterial = &cfg.materials.back();
-
                     validinput = readvals(s, 3, values);
                     if (validinput) {
+                        if (materialApplied) {
+                            cfg.materials.push_back(*currentMaterial);
+                            currentMaterial = &cfg.materials.back();
+                            materialApplied = false;
+                        }
                         for (i = 0; i < 3; i++) {
                             currentMaterial->ambient[i] = values[i];
                         }
@@ -107,6 +110,11 @@ SceneConfiguration Parser::parse(const std::string &fileName)
                 else if (cmd == "diffuse") {
                     validinput = readvals(s, 3, values);
                     if (validinput) {
+                        if (materialApplied) {
+                            cfg.materials.push_back(*currentMaterial);
+                            currentMaterial = &cfg.materials.back();
+                            materialApplied = false;
+                        }
                         for (i = 0; i < 3; i++) {
                             currentMaterial->diffuse[i] = values[i];
                         }
@@ -116,6 +124,11 @@ SceneConfiguration Parser::parse(const std::string &fileName)
                 else if (cmd == "specular") {
                     validinput = readvals(s, 3, values);
                     if (validinput) {
+                        if (materialApplied) {
+                            cfg.materials.push_back(*currentMaterial);
+                            currentMaterial = &cfg.materials.back();
+                            materialApplied = false;
+                        }
                         for (i = 0; i < 3; i++) {
                             currentMaterial->specular[i] = values[i];
                         }
@@ -125,7 +138,12 @@ SceneConfiguration Parser::parse(const std::string &fileName)
                 else if (cmd == "emission") {
                     validinput = readvals(s, 3, values);
                     if (validinput) {
-                        for (i = 0; i < 4; i++) {
+                        if (materialApplied) {
+                            cfg.materials.push_back(*currentMaterial);
+                            currentMaterial = &cfg.materials.back();
+                            materialApplied = false;
+                        }
+                        for (i = 0; i < 3; i++) {
                             currentMaterial->emission[i] = values[i];
                         }
                     }
@@ -134,6 +152,11 @@ SceneConfiguration Parser::parse(const std::string &fileName)
                 else if (cmd == "shininess") {
                     validinput = readvals(s, 1, values);
                     if (validinput) {
+                        if (materialApplied) {
+                            cfg.materials.push_back(*currentMaterial);
+                            currentMaterial = &cfg.materials.back();
+                            materialApplied = false;
+                        }
                         currentMaterial->shininess = values[0];
                     }
                 }
@@ -159,6 +182,7 @@ SceneConfiguration Parser::parse(const std::string &fileName)
                         const glm::vec3 v3 = cfg.vertices.at((int)values[2]);
                         const Triangle *t = new Triangle(v1, v2, v3, cfg.materials.size() - 1, glm::inverse(transfstack.top()));
                         cfg.primitives.emplace_back(t);
+                        materialApplied = true;
                     }
                 }
 
@@ -168,8 +192,11 @@ SceneConfiguration Parser::parse(const std::string &fileName)
                         const glm::vec3 center = {values[0], values[1], values[2]};
                         const Sphere *t = new Sphere(center, values[3], cfg.materials.size() - 1, glm::inverse(transfstack.top()));
                         cfg.primitives.emplace_back(t);
+                        materialApplied = true;
                     }
                 }
+
+                // transforms
 
                 else if (cmd == "translate") {
                     validinput = readvals(s, 3, values);
@@ -190,10 +217,10 @@ SceneConfiguration Parser::parse(const std::string &fileName)
                     }
                 }
 
-                // I include the basic push/pop code for matrix stacks
                 else if (cmd == "pushTransform") {
                     transfstack.push(transfstack.top());
                 }
+
                 else if (cmd == "popTransform") {
                     if (transfstack.size() <= 1) {
                         std::cerr << "Stack has no elements.  Cannot Pop\n";
