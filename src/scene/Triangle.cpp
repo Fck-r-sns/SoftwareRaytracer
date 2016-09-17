@@ -20,12 +20,54 @@ bool Triangle::findIntersection(const Ray &ray, float &minDist, Intersection &re
         const glm::vec3 P = ray.origin + t * ray.direction;
         const glm::vec3 PminusA = P - A;
         // solve equations: P-A=a(B-A)+b(C-A)
-        const float PminusA_1 = PminusA.x;
-        const float PminusA_2 = PminusA.y;
-        const float BminusA_1 = BminusA.x;
-        const float BminusA_2 = BminusA.y;
-        const float CminusA_1 = CminusA.x;
-        const float CminusA_2 = CminusA.y;
+        float PminusA_1;
+        float PminusA_2;
+        float BminusA_1;
+        float BminusA_2;
+        float CminusA_1;
+        float CminusA_2;
+        if (BminusA.x != 0.0) {
+            PminusA_1 = PminusA.x;
+            BminusA_1 = BminusA.x;
+            CminusA_1 = CminusA.x;
+            if (CminusA.y != 0.0) {
+                PminusA_2 = PminusA.y;
+                BminusA_2 = BminusA.y;
+                CminusA_2 = CminusA.y;
+            } else {
+                PminusA_2 = PminusA.z;
+                BminusA_2 = BminusA.z;
+                CminusA_2 = CminusA.z;
+            }
+        } else if (BminusA.y != 0) {
+            PminusA_1 = PminusA.y;
+            BminusA_1 = BminusA.y;
+            CminusA_1 = CminusA.y;
+            if (CminusA.x != 0.0) {
+                PminusA_2 = PminusA.x;
+                BminusA_2 = BminusA.x;
+                CminusA_2 = CminusA.x;
+            } else {
+                PminusA_2 = PminusA.z;
+                BminusA_2 = BminusA.z;
+                CminusA_2 = CminusA.z;
+            }
+        } else if (BminusA.z != 0) {
+            PminusA_1 = PminusA.z;
+            BminusA_1 = BminusA.z;
+            CminusA_1 = CminusA.z;
+            if (CminusA.x != 0.0) {
+                PminusA_2 = PminusA.x;
+                BminusA_2 = BminusA.x;
+                CminusA_2 = CminusA.x;
+            } else {
+                PminusA_2 = PminusA.y;
+                BminusA_2 = BminusA.y;
+                CminusA_2 = CminusA.y;
+            }
+        } else {
+            return false;
+        }
         const float b1 = (PminusA_2 * BminusA_1 - PminusA_1 * BminusA_2);
         const float b2 = (CminusA_2 * BminusA_1 - CminusA_1 * BminusA_2);
         const float b = b1 / b2;

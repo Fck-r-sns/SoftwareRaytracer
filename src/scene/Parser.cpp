@@ -165,11 +165,11 @@ SceneConfiguration Parser::parse(const std::string &fileName)
                 }
 
                 else if (cmd == "sphere") {
-                    validinput = readvals(s, 4, values);
-                    if (validinput) {
-                        Sphere *t = new Sphere({values[0], values[1], values[2]}, values[3], *currentMaterial);
-                        cfg.primitives.emplace_back(t);
-                    }
+//                    validinput = readvals(s, 4, values);
+//                    if (validinput) {
+//                        Sphere *t = new Sphere({values[0], values[1], values[2]}, values[3], *currentMaterial);
+//                        cfg.primitives.emplace_back(t);
+//                    }
                 }
 
                 else if (cmd == "translate") {

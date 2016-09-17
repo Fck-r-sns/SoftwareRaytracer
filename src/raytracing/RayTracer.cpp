@@ -17,8 +17,12 @@ void RayTracer::run(Image &outputImage)
     initCamera();
     const int w = cfg.width;
     const int h = cfg.height;
+    bool dbg = false;
     for (int y = 0; y < h; ++y) {
         for (int x = 0; x < w; ++x) {
+            if (x == 320 && y == 240) {
+                dbg = true;
+            }
             Ray ray = getRay(x, y);
             Intersection intersection;
             const bool intersected = findIntersection(ray, intersection);
@@ -52,8 +56,8 @@ bool RayTracer::findIntersection(const Ray &ray, Intersection &result) const
 
 Pixel RayTracer::getColorFromIntersection(const Intersection &intersection) const
 {
-    const glm::vec3 &diffuse = intersection.primitive->material.diffuse;
-    return Pixel(diffuse.r * 255, diffuse.g * 255, diffuse.b * 255);
+    const glm::vec3 &color = intersection.primitive->material.ambient;
+    return Pixel(color.r * 255, color.g * 255, color.b * 255);
 }
 
 Ray RayTracer::getRay(int pixelXIndex, int pixelYIndex) const
