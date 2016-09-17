@@ -56,7 +56,17 @@ bool RayTracer::findIntersection(const Ray &ray, Intersection &result) const
 
 Pixel RayTracer::getColorFromIntersection(const Intersection &intersection) const
 {
-    const glm::vec3 &color = intersection.primitive->material.ambient;
+    glm::vec3 color;
+    const Material &material = cfg.materials.at(intersection.primitive->materialIndex);
+    color += material.ambient;
+    color += material.emission;
+//    const glm::vec3 directionToTheLight = glm::normalize(cfg.light.directional.position - intersection.point);
+//    const float distanceToTheLight = glm::distance(cfg.light.directional.position, intersection.point);
+//    const float attenuation =
+//            cfg.light.attenuation.constant
+//            + cfg.light.attenuation.linear * distanceToTheLight
+//            + cfg.light.attenuation.quadratic * distanceToTheLight * distanceToTheLight;
+
     return Pixel(color.r * 255, color.g * 255, color.b * 255);
 }
 
