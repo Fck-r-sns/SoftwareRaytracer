@@ -8,6 +8,7 @@
 #include "Parser.h"
 #include "Transform.h"
 #include "Triangle.h"
+#include "Sphere.h"
 
 SceneConfiguration Parser::parse(const std::string &fileName)
 {
@@ -163,42 +164,13 @@ SceneConfiguration Parser::parse(const std::string &fileName)
                     }
                 }
 
-                //                else if (cmd == "sphere" || cmd == "cube" || cmd == "teapot") {
-                //                    if (numobjects == maxobjects) { // No more objects
-                //                        cerr << "Reached Maximum Number of Objects " << numobjects << " Will ignore further objects\n";
-                //                    }
-                //                    else {
-                //                        validinput = readvals(s, 1, values);
-                //                        if (validinput) {
-                //                            object * obj = &(objects[numobjects]);
-                //                            obj->size = values[0];
-
-                //                            // Set the object's light properties
-                //                            for (i = 0; i < 4; i++) {
-                //                                (obj->ambient)[i] = ambient[i];
-                //                                (obj->diffuse)[i] = diffuse[i];
-                //                                (obj->specular)[i] = specular[i];
-                //                                (obj->emission)[i] = emission[i];
-                //                            }
-                //                            obj->shininess = shininess;
-
-                //                            // Set the object's transform
-                //                            obj->transform = transfstack.top();
-
-                //                            // Set the object's type
-                //                            if (cmd == "sphere") {
-                //                                obj->type = sphere;
-                //                            }
-                //                            else if (cmd == "cube") {
-                //                                obj->type = cube;
-                //                            }
-                //                            else if (cmd == "teapot") {
-                //                                obj->type = teapot;
-                //                            }
-                //                        }
-                //                        ++numobjects;
-                //                    }
-                //                }
+                else if (cmd == "sphere") {
+                    validinput = readvals(s, 4, values);
+                    if (validinput) {
+                        Sphere *t = new Sphere({values[0], values[1], values[2]}, values[3], *currentMaterial);
+                        cfg.primitives.emplace_back(t);
+                    }
+                }
 
                 else if (cmd == "translate") {
                     validinput = readvals(s, 3, values);
