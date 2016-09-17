@@ -17,8 +17,14 @@ void RayTracer::run(Image &outputImage)
     initCamera();
     const int w = cfg.width;
     const int h = cfg.height;
+    const int totalPixels = w * h;
+    int pixelCounter = 0;
     for (int y = 0; y < h; ++y) {
         for (int x = 0; x < w; ++x) {
+            ++pixelCounter;
+            if (pixelCounter % 1000 == 0) {
+                std::cout << pixelCounter << "/" << totalPixels << std::endl;
+            }
             const Ray ray = getRay(x, y);
             Intersection intersection;
             const bool intersected = findIntersection(ray, intersection);
