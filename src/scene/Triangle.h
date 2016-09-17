@@ -6,7 +6,7 @@
 
 class Triangle : public Primitive {
 public:
-    Triangle(const glm::vec3 &v1, const glm::vec3 &v2, const glm::vec3 &v3, int materialIndex);
+    Triangle(const glm::vec3 &v1, const glm::vec3 &v2, const glm::vec3 &v3, int materialIndex, const glm::mat4 &transform);
     bool findIntersection(const Ray &ray, float &minDist, Intersection &result) const override;
 
 private:
