@@ -17,13 +17,9 @@ void RayTracer::run(Image &outputImage)
     initCamera();
     const int w = cfg.width;
     const int h = cfg.height;
-    bool dbg = false;
     for (int y = 0; y < h; ++y) {
         for (int x = 0; x < w; ++x) {
-            if (x == 320 && y == 240) {
-                dbg = true;
-            }
-            Ray ray = getRay(x, y);
+            const Ray ray = getRay(x, y);
             Intersection intersection;
             const bool intersected = findIntersection(ray, intersection);
             const Pixel pixel = intersected ? getColorFromIntersection(intersection) : Pixel();
@@ -49,7 +45,10 @@ bool RayTracer::findIntersection(const Ray &ray, Intersection &result) const
     float minDist = std::numeric_limits<float>::max();
     bool found = false;
     for (const auto &primitive : cfg.primitives) {
-        found = primitive->findIntersection(ray, minDist, result) || found;
+        const glm::mat4 &invTransform = primitive->inversedTransform;
+        const glm::vec3 newOrigin = invTransform * glm::vec4(ray.origin, 1);
+        const glm::vec3 newDirection = invTransform * glm::vec4(ray.direction, 0);
+        found = primitive->findIntersection(Ray(newOrigin, newDirection), minDist, result) || found;
     }
     return found;
 }
