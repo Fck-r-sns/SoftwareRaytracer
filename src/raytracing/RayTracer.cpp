@@ -59,8 +59,8 @@ Ray RayTracer::getRay(int pixelXIndex, int pixelYIndex) const
 {
     const float pixelXPos = pixelXIndex + 0.5; // center of pixel
     const float pixelYPos = pixelYIndex + 0.5; // center of pixel
-    const float a = std::tan(fovx / 2) * (2 * pixelXPos - cfg.width) / cfg.width;
-    const float b = std::tan(cfg.camera.fovy / 2) * (cfg.height - 2 * pixelYPos) / cfg.height;
+    const float a = std::tan(fovx / 2 / radiansToDegreesCoef) * (2 * pixelXPos - cfg.width) / cfg.width;
+    const float b = std::tan(cfg.camera.fovy / 2 / radiansToDegreesCoef) * (cfg.height - 2 * pixelYPos) / cfg.height;
     const glm::vec3 direction = glm::normalize(a * u + b * v - w);
     return Ray(cfg.camera.lookFrom, direction);
 }
