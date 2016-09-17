@@ -44,7 +44,7 @@ bool RayTracer::findIntersection(const Ray &ray, Intersection &result) const
     float minDist = std::numeric_limits<float>::max();
     bool found = false;
     for (const auto &primitive : cfg.primitives) {
-        found = primitive->findIntersection(ray, minDist, result);
+        found = primitive->findIntersection(ray, minDist, result) || found;
     }
     return found;
 }
