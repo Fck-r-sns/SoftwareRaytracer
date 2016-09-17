@@ -154,12 +154,10 @@ SceneConfiguration Parser::parse(const std::string &fileName)
                 else if (cmd == "tri") {
                     validinput = readvals(s, 3, values);
                     if (validinput) {
-                        Triangle *t = new Triangle(
-                                    cfg.vertices.at((int)values[0]),
-                                cfg.vertices.at((int)values[1]),
-                                cfg.vertices.at((int)values[2]),
-                                cfg.materials.size() - 1
-                                );
+                        const glm::vec3 v1 = cfg.vertices.at((int)values[0]);
+                        const glm::vec3 v2 = cfg.vertices.at((int)values[1]);
+                        const glm::vec3 v3 = cfg.vertices.at((int)values[2]);
+                        const Triangle *t = new Triangle(v1, v2, v3, cfg.materials.size() - 1);
                         cfg.primitives.emplace_back(t);
                     }
                 }
@@ -167,7 +165,8 @@ SceneConfiguration Parser::parse(const std::string &fileName)
                 else if (cmd == "sphere") {
                     validinput = readvals(s, 4, values);
                     if (validinput) {
-                        Sphere *t = new Sphere({values[0], values[1], values[2]}, values[3], cfg.materials.size() - 1);
+                        const glm::vec3 center = {values[0], values[1], values[2]};
+                        const Sphere *t = new Sphere(center, values[3], cfg.materials.size() - 1);
                         cfg.primitives.emplace_back(t);
                     }
                 }

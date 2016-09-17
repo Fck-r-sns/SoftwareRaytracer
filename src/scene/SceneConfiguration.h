@@ -42,7 +42,7 @@ struct SceneConfiguration
     Light light;
     std::vector<Material> materials;
     std::vector<glm::vec3> vertices;
-    std::vector<std::unique_ptr<Primitive>> primitives;
+    std::vector<std::unique_ptr<const Primitive>> primitives;
 };
 
 #endif // SCENECONFIGURATION_H
