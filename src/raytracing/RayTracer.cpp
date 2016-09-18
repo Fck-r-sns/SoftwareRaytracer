@@ -6,6 +6,7 @@
 const float PI = std::acos(-1);
 const float radiansToDegreesCoef = 180 / PI;
 const float degreesToRadiansCoef = PI / 180;
+const float EPSILON = std::numeric_limits<float>::epsilon() * 500;
 
 RayTracer::RayTracer(const SceneConfiguration &cfg) :
     cfg(cfg)
@@ -25,10 +26,11 @@ void RayTracer::run(Image &outputImage)
             if (pixelCounter % 1000 == 0) {
                 std::cout << pixelCounter << "/" << totalPixels << std::endl;
             }
+            recursionDepth = 0;
             const Ray ray = getRayFromCameraToPixel(x, y);
             const Intersection intersection = findIntersection(ray);
-            const Pixel pixel = !intersection.empty ? getColorFromIntersection(intersection) : Pixel();
-            outputImage.setPixel(x, y, pixel);
+            const glm::vec3 color = !intersection.empty ? getColorFromIntersection(intersection) : glm::vec3();
+            outputImage.setPixel(x, y, Pixel(color.r * 255, color.g * 255, color.b * 255));
         }
     }
 }
@@ -47,6 +49,10 @@ void RayTracer::initCamera()
 
 Intersection RayTracer::findIntersection(const Ray &ray) const
 {
+    if (recursionDepth >= cfg.maxDepth) {
+        return Intersection::EMPTY;
+    }
+    ++recursionDepth;
     float minDist = std::numeric_limits<float>::max();
     Intersection result;
     for (const auto &primitive : cfg.primitives) {
@@ -68,7 +74,7 @@ Intersection RayTracer::findIntersection(const Ray &ray) const
     return result;
 }
 
-Pixel RayTracer::getColorFromIntersection(const Intersection &intersection) const
+glm::vec3 RayTracer::getColorFromIntersection(const Intersection &intersection) const
 {
     glm::vec3 color;
     const Material &material = cfg.materials.at(intersection.primitive->materialIndex);
@@ -81,14 +87,17 @@ Pixel RayTracer::getColorFromIntersection(const Intersection &intersection) cons
     if (cfg.light.directional.enabled) {
         color += processLightSource(intersection, cfg.light.directional, material);
     }
+    const Ray reflectedRay = getReflectedRay(intersection.eyeDirection, intersection.point + EPSILON * intersection.normal, intersection.normal);
+    Intersection reflection = findIntersection(reflectedRay);
+    if (!reflection.empty) {
+        color += material.specular * getColorFromIntersection(reflection);
+    }
 
-    return Pixel(color.r * 255, color.g * 255, color.b * 255);
+    return color;
 }
 
 glm::vec3 RayTracer::processLightSource(const Intersection &intersection, const SceneConfiguration::Light::Source &lightSource, const Material &material) const
 {
-    static const float EPSILON = std::numeric_limits<float>::epsilon() * 500;
-
     const Ray rayToLight = getRayFromPointToPoint(intersection.point + EPSILON * intersection.normal, lightSource.position);
     const Intersection shadowIntersection = findIntersection(rayToLight);
 
@@ -100,7 +109,7 @@ glm::vec3 RayTracer::processLightSource(const Intersection &intersection, const 
                     + cfg.light.attenuation.linear * distanceToTheLight
                     + cfg.light.attenuation.quadratic * distanceToTheLight * distanceToTheLight;
             const glm::vec3 diffuseColor = material.diffuse * std::max(glm::dot(directionToTheLight, intersection.normal), 0.0f);
-            const glm::vec3 halfVec = glm::normalize(glm::normalize(cfg.camera.lookFrom - intersection.point) + directionToTheLight);
+            const glm::vec3 halfVec = glm::normalize(glm::normalize(intersection.eyePosition - intersection.point) + directionToTheLight);
             const glm::vec3 specularColor = material.specular * std::pow(std::max(glm::dot(halfVec, intersection.normal), 0.0f), material.shininess);
             return lightSource.color / attenuation * (diffuseColor + specularColor);
     }
@@ -120,4 +129,9 @@ Ray RayTracer::getRayFromCameraToPixel(int pixelXIndex, int pixelYIndex) const
 Ray RayTracer::getRayFromPointToPoint(const glm::vec3 &from, const glm::vec3 &to) const
 {
     return Ray(from, glm::normalize(to - from));
+}
+
+Ray RayTracer::getReflectedRay(const glm::vec3 &direction, const glm::vec3 &reflectionPoint, const glm::vec3 &normal) const
+{
+    return Ray(reflectionPoint, direction - 2 * glm::dot(direction, normal) * normal);
 }
