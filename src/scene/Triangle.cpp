@@ -7,8 +7,9 @@ Triangle::Triangle(const glm::vec3 &v1, const glm::vec3 &v2, const glm::vec3 &v3
 {
 }
 
-bool Triangle::findIntersection(const Ray &ray, float &minDist, Intersection &result) const
+Intersection Triangle::findIntersection(const Ray &ray, float &minDist) const
 {
+    Intersection result;
     const glm::vec3 &A = vertices[0];
     const glm::vec3 &B = vertices[1];
     const glm::vec3 &C = vertices[2];
@@ -77,7 +78,8 @@ bool Triangle::findIntersection(const Ray &ray, float &minDist, Intersection &re
             }
         }
         if (!ready) {
-            return false;
+            result.empty = true;
+            return result;
         }
         const float b1 = (PminusA_2 * BminusA_1 - PminusA_1 * BminusA_2);
         const float b2 = (CminusA_2 * BminusA_1 - CminusA_1 * BminusA_2);
@@ -90,8 +92,10 @@ bool Triangle::findIntersection(const Ray &ray, float &minDist, Intersection &re
             result.t = t;
             result.point = P;
             result.primitive = this;
-            return true;
+            result.empty = false;
+            return result;
         }
     }
-    return false;
+    result.empty = true;
+    return result;
 }

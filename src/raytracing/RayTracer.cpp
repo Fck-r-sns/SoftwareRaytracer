@@ -26,9 +26,8 @@ void RayTracer::run(Image &outputImage)
                 std::cout << pixelCounter << "/" << totalPixels << std::endl;
             }
             const Ray ray = getRayFromCameraToPixel(x, y);
-            Intersection intersection;
-            const bool intersected = findIntersection(ray, intersection);
-            const Pixel pixel = intersected ? getColorFromIntersection(intersection) : Pixel();
+            const Intersection intersection = findIntersection(ray);
+            const Pixel pixel = !intersection.empty ? getColorFromIntersection(intersection) : Pixel();
             outputImage.setPixel(x, y, pixel);
         }
     }
@@ -46,17 +45,21 @@ void RayTracer::initCamera()
     this->fovx = fovx;
 }
 
-bool RayTracer::findIntersection(const Ray &ray, Intersection &result) const
+Intersection RayTracer::findIntersection(const Ray &ray) const
 {
     float minDist = std::numeric_limits<float>::max();
-    bool found = false;
+    Intersection result;
     for (const auto &primitive : cfg.primitives) {
         const glm::mat4 &invTransform = primitive->inversedTransform;
         const glm::vec3 newOrigin = invTransform * glm::vec4(ray.origin, 1);
         const glm::vec3 newDirection = invTransform * glm::vec4(ray.direction, 0);
-        found = primitive->findIntersection(Ray(newOrigin, newDirection), minDist, result) || found;
+        const Ray transformedRay(newOrigin, newDirection);
+        const Intersection intersection = primitive->findIntersection(transformedRay, minDist);
+        if (!intersection.empty && intersection.t < result.t) {
+            result = intersection;
+        }
     }
-    return found;
+    return result;
 }
 
 Pixel RayTracer::getColorFromIntersection(const Intersection &intersection) const
@@ -69,10 +72,9 @@ Pixel RayTracer::getColorFromIntersection(const Intersection &intersection) cons
     if (cfg.light.point.enabled) {
         const SceneConfiguration::Light::Source &lightSource = cfg.light.point;
         const Ray rayToLight = getRayFromPointToPoint(intersection.point, lightSource.position);
-        Intersection shadowIntersection;
-        const bool isShadowed = findIntersection(rayToLight, shadowIntersection);
+        const Intersection shadowIntersection = findIntersection(rayToLight);
 
-        if (!isShadowed) {
+        if (shadowIntersection.empty) {
             //    const glm::vec3 directionToTheLight = glm::normalize(lightSource.position - intersection.point);
             //    const float distanceToTheLight = glm::distance(lightSource.position, intersection.point);
             //    const float attenuation =
