@@ -59,11 +59,17 @@ Intersection RayTracer::findIntersection(const Ray &ray) const
             result = intersection;
         }
     }
+    if (!result.empty) {
+        result.point = result.primitive->directTransform * glm::vec4(result.point, 1);
+        result.normal = glm::normalize(result.primitive->normalTransform * result.normal);
+    }
     return result;
 }
 
 Pixel RayTracer::getColorFromIntersection(const Intersection &intersection) const
 {
+    static const float EPSILON = std::numeric_limits<float>::epsilon() * 500;
+
     glm::vec3 color;
     const Material &material = cfg.materials.at(intersection.primitive->materialIndex);
     color += material.ambient;
@@ -71,7 +77,7 @@ Pixel RayTracer::getColorFromIntersection(const Intersection &intersection) cons
 
     if (cfg.light.point.enabled) {
         const SceneConfiguration::Light::Source &lightSource = cfg.light.point;
-        const Ray rayToLight = getRayFromPointToPoint(intersection.point, lightSource.position);
+        const Ray rayToLight = getRayFromPointToPoint(intersection.point + EPSILON * intersection.normal, lightSource.position);
         const Intersection shadowIntersection = findIntersection(rayToLight);
 
         if (shadowIntersection.empty) {
@@ -102,8 +108,5 @@ Ray RayTracer::getRayFromCameraToPixel(int pixelXIndex, int pixelYIndex) const
 
 Ray RayTracer::getRayFromPointToPoint(const glm::vec3 &from, const glm::vec3 &to) const
 {
-    static const float EPSILON = 0.5f;
-    const glm::vec3 direction = glm::normalize(to - from);
-    const glm::vec3 origin = from + direction * EPSILON;
-    return Ray(origin, direction);
+    return Ray(from, glm::normalize(to - from));
 }
