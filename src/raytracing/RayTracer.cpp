@@ -25,7 +25,7 @@ void RayTracer::run(Image &outputImage)
             if (pixelCounter % 1000 == 0) {
                 std::cout << pixelCounter << "/" << totalPixels << std::endl;
             }
-            const Ray ray = getRay(x, y);
+            const Ray ray = getRayFromCameraToPixel(x, y);
             Intersection intersection;
             const bool intersected = findIntersection(ray, intersection);
             const Pixel pixel = intersected ? getColorFromIntersection(intersection) : Pixel();
@@ -65,18 +65,30 @@ Pixel RayTracer::getColorFromIntersection(const Intersection &intersection) cons
     const Material &material = cfg.materials.at(intersection.primitive->materialIndex);
     color += material.ambient;
     color += material.emission;
-//    color += material.diffuse;
-//    const glm::vec3 directionToTheLight = glm::normalize(cfg.light.directional.position - intersection.point);
-//    const float distanceToTheLight = glm::distance(cfg.light.directional.position, intersection.point);
-//    const float attenuation =
-//            cfg.light.attenuation.constant
-//            + cfg.light.attenuation.linear * distanceToTheLight
-//            + cfg.light.attenuation.quadratic * distanceToTheLight * distanceToTheLight;
+
+    if (cfg.light.point.enabled) {
+        const SceneConfiguration::Light::Source &lightSource = cfg.light.point;
+        const Ray rayToLight = getRayFromPointToPoint(intersection.point, lightSource.position);
+        Intersection shadowIntersection;
+        const bool isShadowed = findIntersection(rayToLight, shadowIntersection);
+
+        if (!isShadowed) {
+            //    const glm::vec3 directionToTheLight = glm::normalize(lightSource.position - intersection.point);
+            //    const float distanceToTheLight = glm::distance(lightSource.position, intersection.point);
+            //    const float attenuation =
+            //            cfg.light.attenuation.constant
+            //            + cfg.light.attenuation.linear * distanceToTheLight
+            //            + cfg.light.attenuation.quadratic * distanceToTheLight * distanceToTheLight;
+            color = glm::vec3(1, 1, 1);
+        } else {
+            color = glm::vec3(0, 0, 0);
+        }
+    }
 
     return Pixel(color.r * 255, color.g * 255, color.b * 255);
 }
 
-Ray RayTracer::getRay(int pixelXIndex, int pixelYIndex) const
+Ray RayTracer::getRayFromCameraToPixel(int pixelXIndex, int pixelYIndex) const
 {
     const float pixelXPos = pixelXIndex + 0.5; // center of pixel
     const float pixelYPos = pixelYIndex + 0.5; // center of pixel
@@ -84,4 +96,9 @@ Ray RayTracer::getRay(int pixelXIndex, int pixelYIndex) const
     const float b = std::tan(cfg.camera.fovy / 2.0 * degreesToRadiansCoef) * (cfg.height - 2 * pixelYPos) / cfg.height;
     const glm::vec3 direction = glm::normalize(a * u + b * v - w);
     return Ray(cfg.camera.lookFrom, direction);
+}
+
+Ray RayTracer::getRayFromPointToPoint(const glm::vec3 &from, const glm::vec3 &to) const
+{
+    return Ray(from, glm::normalize(to - from));
 }

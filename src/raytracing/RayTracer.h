@@ -14,7 +14,8 @@ public:
 
 private:
     void initCamera();
-    Ray getRay(int pixelXIndex, int pixelYIndex) const;
+    Ray getRayFromCameraToPixel(int pixelXIndex, int pixelYIndex) const;
+    Ray getRayFromPointToPoint(const glm::vec3 &from, const glm::vec3 &to) const;
     bool findIntersection(const Ray &ray, Intersection &result) const;
     Pixel getColorFromIntersection(const Intersection &intersection) const;
 
