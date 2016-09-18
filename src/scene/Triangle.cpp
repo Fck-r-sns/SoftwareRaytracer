@@ -3,20 +3,18 @@
 
 Triangle::Triangle(const glm::vec3 &v1, const glm::vec3 &v2, const glm::vec3 &v3, int materialIndex, const glm::mat4 &inversedTransform) :
     Primitive(materialIndex, inversedTransform),
-    vertices({v1, v2, v3})
+    A(v1),
+    B(v2),
+    C(v3),
+    normal(glm::normalize(glm::cross(B - A, C - A)))
 {
 }
 
 Intersection Triangle::findIntersection(const Ray &ray, float &minDist) const
 {
-    Intersection result;
-    const glm::vec3 &A = vertices[0];
-    const glm::vec3 &B = vertices[1];
-    const glm::vec3 &C = vertices[2];
     const glm::vec3 BminusA = B - A;
     const glm::vec3 CminusA = C - A;
-    const glm::vec3 n = glm::normalize(glm::cross(BminusA, CminusA));
-    const float t = (glm::dot(A, n) - glm::dot(ray.origin, n)) / glm::dot(ray.direction, n);
+    const float t = (glm::dot(A, normal) - glm::dot(ray.origin, normal)) / glm::dot(ray.direction, normal);
     if (t > 0 && t < minDist) {
         const glm::vec3 P = ray.origin + t * ray.direction;
         const glm::vec3 PminusA = P - A;
@@ -78,8 +76,7 @@ Intersection Triangle::findIntersection(const Ray &ray, float &minDist) const
             }
         }
         if (!ready) {
-            result.empty = true;
-            return result;
+            return Intersection::EMPTY;
         }
         const float b1 = (PminusA_2 * BminusA_1 - PminusA_1 * BminusA_2);
         const float b2 = (CminusA_2 * BminusA_1 - CminusA_1 * BminusA_2);
@@ -89,13 +86,14 @@ Intersection Triangle::findIntersection(const Ray &ray, float &minDist) const
                 && (0 <= b) && (b <= 1)
                 && (a + b <= 1)) {
             minDist = t;
+            Intersection result;
             result.t = t;
             result.point = P;
+            result.normal = normal;
             result.primitive = this;
             result.empty = false;
             return result;
         }
     }
-    result.empty = true;
-    return result;
+    return Intersection::EMPTY;
 }

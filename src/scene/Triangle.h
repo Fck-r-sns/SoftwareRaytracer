@@ -10,7 +10,10 @@ public:
     Intersection findIntersection(const Ray &ray, float &minDist) const override;
 
 private:
-    const std::array<glm::vec3, 3> vertices;
+    const glm::vec3 A;
+    const glm::vec3 B;
+    const glm::vec3 C;
+    const glm::vec3 normal;
 };
 
 #endif // TRIANGLE_H
