@@ -6,7 +6,7 @@
 const float PI = std::acos(-1);
 const float radiansToDegreesCoef = 180 / PI;
 const float degreesToRadiansCoef = PI / 180;
-const float EPSILON = std::numeric_limits<float>::epsilon() * 2000;
+const float EPSILON = std::numeric_limits<float>::epsilon() * 500;
 
 RayTracer::RayTracer(const SceneConfiguration &cfg) :
     cfg(cfg)
@@ -84,11 +84,23 @@ glm::vec3 RayTracer::getColorFromIntersection(const Intersection &intersection) 
     color += material.emission;
 
     if (cfg.light.point.enabled) {
-        color += processLightSource(intersection, cfg.light.point, material, glm::normalize(cfg.light.point.coordinate - intersection.point));
+        color += processLightSource(
+                    intersection,
+                    cfg.light.point,
+                    material,
+                    glm::normalize(cfg.light.point.coordinate - intersection.point),
+                    true);
     }
+
     if (cfg.light.directional.enabled) {
-        color += processLightSource(intersection, cfg.light.directional, material, glm::normalize(cfg.light.directional.coordinate));
+        color += processLightSource(
+                    intersection,
+                    cfg.light.directional,
+                    material,
+                    glm::normalize(cfg.light.directional.coordinate),
+                    false);
     }
+
     const Ray reflectedRay = getReflectedRay(intersection.eyeDirection, intersection.point + EPSILON * intersection.normal, intersection.normal);
     Intersection reflection = findIntersection(reflectedRay, true);
     if (!reflection.empty) {
@@ -98,12 +110,21 @@ glm::vec3 RayTracer::getColorFromIntersection(const Intersection &intersection) 
     return color;
 }
 
-glm::vec3 RayTracer::processLightSource(const Intersection &intersection, const SceneConfiguration::Light::Source &lightSource, const Material &material, const glm::vec3 &directionToTheLight) const
+glm::vec3 RayTracer::processLightSource(
+        const Intersection &intersection,
+        const SceneConfiguration::Light::Source &lightSource,
+        const Material &material,
+        const glm::vec3 &directionToTheLight,
+        bool checkDistanceToLightSourceForShadows) const
 {
     const Ray rayToLight = getRayFromPointToPoint(intersection.point + EPSILON * intersection.normal, lightSource.coordinate);
     const Intersection shadowIntersection = findIntersection(rayToLight, false);
 
-    if (shadowIntersection.empty) {
+    if (shadowIntersection.empty
+            || (checkDistanceToLightSourceForShadows
+                && (glm::distance(shadowIntersection.eyePosition, shadowIntersection.point)
+                    > glm::distance(shadowIntersection.eyePosition, lightSource.coordinate))))
+    {
         const float distanceToTheLight = glm::distance(lightSource.coordinate, intersection.point);
         const float attenuation =
                 cfg.light.attenuation.constant
