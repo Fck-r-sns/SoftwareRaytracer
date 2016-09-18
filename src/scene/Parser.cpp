@@ -79,7 +79,7 @@ SceneConfiguration Parser::parse(const std::string &fileName)
                     validinput = readvals(s, 6, values);
                     if (validinput) {
                         cfg.light.directional.enabled = true;
-                        cfg.light.directional.position = { values[0], values[1], values[2] };
+                        cfg.light.directional.coordinate = { values[0], values[1], values[2] };
                         cfg.light.directional.color = { values[3], values[4], values[5] };
                     }
                 }
@@ -88,7 +88,7 @@ SceneConfiguration Parser::parse(const std::string &fileName)
                     validinput = readvals(s, 6, values);
                     if (validinput) {
                         cfg.light.point.enabled = true;
-                        cfg.light.point.position = { values[0], values[1], values[2] };
+                        cfg.light.point.coordinate = { values[0], values[1], values[2] };
                         cfg.light.point.color = { values[3], values[4], values[5] };
                     }
                 }

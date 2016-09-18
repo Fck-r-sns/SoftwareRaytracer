@@ -20,7 +20,7 @@ struct SceneConfiguration
     struct Light {
         struct Source {
             bool enabled = false;
-            glm::vec3 position;
+            glm::vec3 coordinate;
             glm::vec3 color;
         };
 
