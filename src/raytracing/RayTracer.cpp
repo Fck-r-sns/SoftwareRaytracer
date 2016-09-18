@@ -75,15 +75,15 @@ Pixel RayTracer::getColorFromIntersection(const Intersection &intersection) cons
         const Intersection shadowIntersection = findIntersection(rayToLight);
 
         if (shadowIntersection.empty) {
-            //    const glm::vec3 directionToTheLight = glm::normalize(lightSource.position - intersection.point);
-            //    const float distanceToTheLight = glm::distance(lightSource.position, intersection.point);
-            //    const float attenuation =
-            //            cfg.light.attenuation.constant
-            //            + cfg.light.attenuation.linear * distanceToTheLight
-            //            + cfg.light.attenuation.quadratic * distanceToTheLight * distanceToTheLight;
-            color = glm::vec3(1, 1, 1);
-        } else {
-            color = glm::vec3(0, 0, 0);
+                const glm::vec3 directionToTheLight = glm::normalize(lightSource.position - intersection.point);
+                const float distanceToTheLight = glm::distance(lightSource.position, intersection.point);
+                const float attenuation =
+                        cfg.light.attenuation.constant
+                        + cfg.light.attenuation.linear * distanceToTheLight
+                        + cfg.light.attenuation.quadratic * distanceToTheLight * distanceToTheLight;
+                const glm::vec3 diffuseColor = material.diffuse * std::max(glm::dot(directionToTheLight, intersection.normal), 0.0f);
+                const glm::vec3 specularColor; // TODO
+                color += lightSource.color / attenuation * (diffuseColor + specularColor);
         }
     }
 
@@ -102,5 +102,8 @@ Ray RayTracer::getRayFromCameraToPixel(int pixelXIndex, int pixelYIndex) const
 
 Ray RayTracer::getRayFromPointToPoint(const glm::vec3 &from, const glm::vec3 &to) const
 {
-    return Ray(from, glm::normalize(to - from));
+    static const float EPSILON = 0.5f;
+    const glm::vec3 direction = glm::normalize(to - from);
+    const glm::vec3 origin = from + direction * EPSILON;
+    return Ray(origin, direction);
 }
