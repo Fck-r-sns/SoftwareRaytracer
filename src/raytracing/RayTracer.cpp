@@ -88,7 +88,8 @@ Pixel RayTracer::getColorFromIntersection(const Intersection &intersection) cons
                         + cfg.light.attenuation.linear * distanceToTheLight
                         + cfg.light.attenuation.quadratic * distanceToTheLight * distanceToTheLight;
                 const glm::vec3 diffuseColor = material.diffuse * std::max(glm::dot(directionToTheLight, intersection.normal), 0.0f);
-                const glm::vec3 specularColor; // TODO
+                const glm::vec3 halfVec = glm::normalize(glm::normalize(cfg.camera.lookFrom - intersection.point) + directionToTheLight);
+                const glm::vec3 specularColor = material.specular * std::pow(std::max(glm::dot(halfVec, intersection.normal), 0.0f), material.shininess);
                 color += lightSource.color / attenuation * (diffuseColor + specularColor);
         }
     }
