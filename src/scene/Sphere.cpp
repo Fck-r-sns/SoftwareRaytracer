@@ -1,8 +1,8 @@
 #include "Sphere.h"
 #include "libs/glm/gtc/matrix_transform.hpp"
 
-Sphere::Sphere(const glm::vec3 &position, float radius, int materialIndex, const glm::mat4 &inversedTransform) :
-    Primitive(materialIndex, inversedTransform),
+Sphere::Sphere(const glm::vec3 &position, float radius, int materialIndex) :
+    Primitive(materialIndex),
     position(position),
     radius(radius)
 {

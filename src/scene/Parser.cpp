@@ -182,7 +182,10 @@ SceneConfiguration Parser::parse(const std::string &fileName)
                         const glm::vec3 v1 = cfg.vertices.at((int)values[0]);
                         const glm::vec3 v2 = cfg.vertices.at((int)values[1]);
                         const glm::vec3 v3 = cfg.vertices.at((int)values[2]);
-                        const Triangle *t = new Triangle(v1, v2, v3, cfg.materials.size() - 1, glm::inverse(transfstack.top()));
+                        Triangle *t = new Triangle(v1, v2, v3, cfg.materials.size() - 1);
+                        t->directTransform = transfstack.top();
+                        t->inversedTransform = glm::inverse(transfstack.top());
+                        t->normalTransform = glm::transpose(glm::inverse(glm::mat3(transfstack.top())));
                         cfg.primitives.emplace_back(t);
                         materialApplied = true;
                     }
@@ -192,8 +195,11 @@ SceneConfiguration Parser::parse(const std::string &fileName)
                     validinput = readvals(s, 4, values);
                     if (validinput) {
                         const glm::vec3 center = {values[0], values[1], values[2]};
-                        const Sphere *t = new Sphere(center, values[3], cfg.materials.size() - 1, glm::inverse(transfstack.top()));
-                        cfg.primitives.emplace_back(t);
+                        Sphere *s = new Sphere(center, values[3], cfg.materials.size() - 1);
+                        s->directTransform = transfstack.top();
+                        s->inversedTransform = glm::inverse(transfstack.top());
+                        s->normalTransform = glm::transpose(glm::inverse(glm::mat3(transfstack.top())));
+                        cfg.primitives.emplace_back(s);
                         materialApplied = true;
                     }
                 }

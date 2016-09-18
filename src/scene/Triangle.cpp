@@ -1,8 +1,8 @@
 #include "Triangle.h"
 #include "libs/glm/gtc/matrix_transform.hpp"
 
-Triangle::Triangle(const glm::vec3 &v1, const glm::vec3 &v2, const glm::vec3 &v3, int materialIndex, const glm::mat4 &inversedTransform) :
-    Primitive(materialIndex, inversedTransform),
+Triangle::Triangle(const glm::vec3 &v1, const glm::vec3 &v2, const glm::vec3 &v3, int materialIndex) :
+    Primitive(materialIndex),
     A(v1),
     B(v2),
     C(v3),
