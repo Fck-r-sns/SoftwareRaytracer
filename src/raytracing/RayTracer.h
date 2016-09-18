@@ -17,7 +17,7 @@ private:
     Ray getRayFromCameraToPixel(int pixelXIndex, int pixelYIndex) const;
     Ray getRayFromPointToPoint(const glm::vec3 &from, const glm::vec3 &to) const;
     Ray getReflectedRay(const glm::vec3 &direction, const glm::vec3 &reflectionPoint, const glm::vec3 &normal) const;
-    Intersection findIntersection(const Ray &ray) const;
+    Intersection findIntersection(const Ray &ray, bool countRecursion) const;
     glm::vec3 getColorFromIntersection(const Intersection &intersection) const;
     glm::vec3 processLightSource(const Intersection &intersection, const SceneConfiguration::Light::Source &lightSource, const Material &material) const;
 
