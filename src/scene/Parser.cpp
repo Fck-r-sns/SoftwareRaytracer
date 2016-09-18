@@ -93,6 +93,15 @@ SceneConfiguration Parser::parse(const std::string &fileName)
                     }
                 }
 
+                else if (cmd == "attenuation") {
+                    validinput = readvals(s, 3, values);
+                    if (validinput) {
+                        cfg.light.attenuation.constant = values[0];
+                        cfg.light.attenuation.linear = values[1];
+                        cfg.light.attenuation.quadratic = values[2];
+                    }
+                }
+
                 // material
 
                 else if (cmd == "ambient") {
