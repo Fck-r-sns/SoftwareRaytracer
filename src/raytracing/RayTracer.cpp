@@ -70,33 +70,41 @@ Intersection RayTracer::findIntersection(const Ray &ray) const
 
 Pixel RayTracer::getColorFromIntersection(const Intersection &intersection) const
 {
-    static const float EPSILON = std::numeric_limits<float>::epsilon() * 500;
-
     glm::vec3 color;
     const Material &material = cfg.materials.at(intersection.primitive->materialIndex);
     color += material.ambient;
     color += material.emission;
 
     if (cfg.light.point.enabled) {
-        const SceneConfiguration::Light::Source &lightSource = cfg.light.point;
-        const Ray rayToLight = getRayFromPointToPoint(intersection.point + EPSILON * intersection.normal, lightSource.position);
-        const Intersection shadowIntersection = findIntersection(rayToLight);
-
-        if (shadowIntersection.empty) {
-                const glm::vec3 directionToTheLight = glm::normalize(lightSource.position - intersection.point);
-                const float distanceToTheLight = glm::distance(lightSource.position, intersection.point);
-                const float attenuation =
-                        cfg.light.attenuation.constant
-                        + cfg.light.attenuation.linear * distanceToTheLight
-                        + cfg.light.attenuation.quadratic * distanceToTheLight * distanceToTheLight;
-                const glm::vec3 diffuseColor = material.diffuse * std::max(glm::dot(directionToTheLight, intersection.normal), 0.0f);
-                const glm::vec3 halfVec = glm::normalize(glm::normalize(cfg.camera.lookFrom - intersection.point) + directionToTheLight);
-                const glm::vec3 specularColor = material.specular * std::pow(std::max(glm::dot(halfVec, intersection.normal), 0.0f), material.shininess);
-                color += lightSource.color / attenuation * (diffuseColor + specularColor);
-        }
+        color += processLightSource(intersection, cfg.light.point, material);
+    }
+    if (cfg.light.directional.enabled) {
+        color += processLightSource(intersection, cfg.light.directional, material);
     }
 
     return Pixel(color.r * 255, color.g * 255, color.b * 255);
+}
+
+glm::vec3 RayTracer::processLightSource(const Intersection &intersection, const SceneConfiguration::Light::Source &lightSource, const Material &material) const
+{
+    static const float EPSILON = std::numeric_limits<float>::epsilon() * 500;
+
+    const Ray rayToLight = getRayFromPointToPoint(intersection.point + EPSILON * intersection.normal, lightSource.position);
+    const Intersection shadowIntersection = findIntersection(rayToLight);
+
+    if (shadowIntersection.empty) {
+            const glm::vec3 directionToTheLight = glm::normalize(lightSource.position - intersection.point);
+            const float distanceToTheLight = glm::distance(lightSource.position, intersection.point);
+            const float attenuation =
+                    cfg.light.attenuation.constant
+                    + cfg.light.attenuation.linear * distanceToTheLight
+                    + cfg.light.attenuation.quadratic * distanceToTheLight * distanceToTheLight;
+            const glm::vec3 diffuseColor = material.diffuse * std::max(glm::dot(directionToTheLight, intersection.normal), 0.0f);
+            const glm::vec3 halfVec = glm::normalize(glm::normalize(cfg.camera.lookFrom - intersection.point) + directionToTheLight);
+            const glm::vec3 specularColor = material.specular * std::pow(std::max(glm::dot(halfVec, intersection.normal), 0.0f), material.shininess);
+            return lightSource.color / attenuation * (diffuseColor + specularColor);
+    }
+    return glm::vec3();
 }
 
 Ray RayTracer::getRayFromCameraToPixel(int pixelXIndex, int pixelYIndex) const

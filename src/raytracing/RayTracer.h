@@ -18,6 +18,7 @@ private:
     Ray getRayFromPointToPoint(const glm::vec3 &from, const glm::vec3 &to) const;
     Intersection findIntersection(const Ray &ray) const;
     Pixel getColorFromIntersection(const Intersection &intersection) const;
+    glm::vec3 processLightSource(const Intersection &intersection, const SceneConfiguration::Light::Source &lightSource, const Material &material) const;
 
 private:
     const SceneConfiguration &cfg;
