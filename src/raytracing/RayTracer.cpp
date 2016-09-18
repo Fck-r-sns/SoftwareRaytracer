@@ -57,6 +57,8 @@ Intersection RayTracer::findIntersection(const Ray &ray) const
         const Intersection intersection = primitive->findIntersection(transformedRay, minDist);
         if (!intersection.empty && intersection.t < result.t) {
             result = intersection;
+            result.eyePosition = transformedRay.origin;
+            result.eyeDirection = transformedRay.direction;
         }
     }
     if (!result.empty) {

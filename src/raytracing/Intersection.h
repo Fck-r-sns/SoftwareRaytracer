@@ -16,6 +16,8 @@ public:
     float t = std::numeric_limits<float>::max();
     glm::vec3 point;
     glm::vec3 normal;
+    glm::vec3 eyePosition;
+    glm::vec3 eyeDirection;
     const Primitive *primitive = nullptr;
     static const Intersection EMPTY;
 };
