@@ -19,7 +19,7 @@ private:
     Ray getReflectedRay(const glm::vec3 &direction, const glm::vec3 &reflectionPoint, const glm::vec3 &normal) const;
     Intersection findIntersection(const Ray &ray, bool countRecursion) const;
     glm::vec3 getColorFromIntersection(const Intersection &intersection) const;
-    glm::vec3 processLightSource(const Intersection &intersection, const SceneConfiguration::Light::Source &lightSource, const Material &material) const;
+    glm::vec3 processLightSource(const Intersection &intersection, const SceneConfiguration::Light::Source &lightSource, const Material &material, const glm::vec3 &directionToTheLight) const;
 
 private:
     const SceneConfiguration &cfg;
